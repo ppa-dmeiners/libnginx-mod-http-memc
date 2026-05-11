@@ -1,0 +1,34 @@
+#!/bin/sh
+set -e
+
+cat <<EOF > "/etc/nginx/sites-enabled/default"
+server {
+  listen 80 default_server;
+
+  location /flush {
+    set \$memc_cmd flush_all;
+    memc_pass 127.0.0.1:11211;
+  }
+}
+EOF
+
+exp="OK
+response_code: 200"
+
+nginx -t
+invoke-rc.d nginx restart || { journalctl -n all -xu nginx.service; exit 1; }
+
+out=`curl --fail -w "response_code: %{http_code}\n" http://127.0.0.1/flush`
+out=`echo "${out}" | sed 's/\r//'`
+
+if [ x"${out}" != x"${exp}" ]; then
+  echo "output:"
+  echo "====================="
+  echo "${out}"
+  echo "====================="
+  echo "expected output:"
+  echo "====================="
+  echo "${exp}"
+  echo "====================="
+  exit 1
+fi

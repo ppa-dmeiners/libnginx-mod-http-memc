@@ -1,0 +1,26 @@
+#!/usr/bin/make -f
+
+include /usr/share/dpkg/default.mk
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+execute_before_dh_auto_build:
+	# rebuild ngx_http_memc_response.c using ragel
+	[ -f src/ngx_http_memc_response.c.orig ] || cp src/ngx_http_memc_response.c src/ngx_http_memc_response.c.orig
+	ragel -G2 src/ngx_http_memc_response.rl || mv -f src/ngx_http_memc_response.c.orig src/ngx_http_memc_response.c
+	diff -u src/ngx_http_memc_response.c.orig src/ngx_http_memc_response.c || :
+
+execute_after_dh_auto_build:
+	mv -f src/ngx_http_memc_response.c.orig src/ngx_http_memc_response.c
+
+%:
+	dh $@
+
+NGINX_VERSION = $(shell /usr/sbin/nginx -V 2>&1 | sed -E -ne 's|^nginx version: nginx/([^ ]+).*|\1|p')
+DEB_VERSION_EPOCH = $(call dpkg_late_eval,DEB_VERSION_EPOCH,echo '$(DEB_VERSION_EPOCH_UPSTREAM)' | sed -e 's/[^:]*$$//')
+DEB_VERSION_REVISION = $(call dpkg_late_eval,DEB_VERSION_REVISION,echo '$(DEB_VERSION_UPSTREAM_REVISION)' | sed -e 's/^.*-//')
+NGINX_DEB_VERSION = $(DEB_VERSION_EPOCH)$(DEB_VERSION_UPSTREAM)+$(NGINX_VERSION)-$(DEB_VERSION_REVISION)
+
+override_dh_gencontrol:
+	dh_gencontrol --remaining-packages -- -v$(NGINX_DEB_VERSION)
+

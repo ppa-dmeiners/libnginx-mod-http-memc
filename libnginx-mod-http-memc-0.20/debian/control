@@ -1,0 +1,25 @@
+Source: libnginx-mod-http-memc
+Section: httpd
+Priority: optional
+Maintainer: Debian Nginx Maintainers <pkg-nginx-maintainers@alioth-lists.debian.net>
+Uploaders: Jérémy Lal <kapouer@melix.org>,
+Build-Depends: debhelper-compat (= 13),
+               dh-sequence-nginx,
+               ragel,
+Standards-Version: 4.7.2
+Homepage: https://github.com/openresty/memc-nginx-module
+Vcs-Git: https://salsa.debian.org/nginx-team/libnginx-mod-http-memc.git
+Vcs-Browser: https://salsa.debian.org/nginx-team/libnginx-mod-http-memc
+
+Package: libnginx-mod-http-memc
+Architecture: any
+Multi-Arch: foreign
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+Recommends: nginx,
+Description: Extended memcached commands module for Nginx
+ This module supports almost the whole memcached ascii protocol,
+ and provides many more commands than the embedded memcached
+ module in Nginx.
+ The libnginx-mod-http-srcache-filter module can be configured to
+ use that module to cache responses.
