@@ -1,3 +1,9 @@
+libnginx-mod-http-memc (1:0.20-3+ubuntu26.04.1+deb.meiners.net+1.30.4) resolute; urgency=medium
+
+  * New upstream version 1.30.4
+
+ -- David Meiners <david@meiners.net>  Sat, 18 Jul 2026 04:21:03 +0000
+
 libnginx-mod-http-memc (1:0.20-3+ubuntu26.04.1+deb.meiners.net+1.30.3) resolute; urgency=medium
 
   * New upstream version 1.30.3
